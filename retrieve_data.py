@@ -1,5 +1,6 @@
 # Retrieves data from the customer database and writes it to a new spreadsheet
 import sys
+import argparse
 import openpyxl
 import config
 
@@ -71,5 +72,11 @@ def create(days):
 
 
 if __name__ == '__main__':
-    num_days = int(sys.argv[1])
-    main(num_days)
+    parser = argparse.ArgumentParser(
+        prog="retrieve_data", description="Retrieve data from a spreadsheet",
+        usage='%(prog)s [options]')
+    parser.add_argument(
+        "days", type=int, help="Retrieve customer data from the last n days",
+        choices=[7, 15, 30])
+    args = parser.parse_args()
+    main(args.days)
