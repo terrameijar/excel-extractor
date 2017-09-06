@@ -1,5 +1,4 @@
 # Retrieves data from the customer database and writes it to a new spreadsheet
-import sys
 import argparse
 import openpyxl
 import config
