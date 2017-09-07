@@ -63,7 +63,6 @@ def create(days):
                 for item in row_:
                     sheet.cell(row=rownum + 1, column=string_to_index(item.column)).value \
                         = retrieved_data[rownum][string_to_index(item.column) - 1].value
-
     except IndexError:
         pass
 
