@@ -1,11 +1,24 @@
 # Retrieves data from the customer database and writes it to a new spreadsheet
+import sys
 import argparse
 import openpyxl
 import config
 
 
+def parse_args(args):
+    parser = argparse.ArgumentParser(
+        prog="retrieve_data", description="Retrieve data from a spreadsheet",
+        usage='%(prog)s [options]')
+    parser.add_argument(
+        "days", type=int, help="Retrieve customer data from the last n days",
+        choices=[7, 15, 30])
+    args = parser.parse_args(args)
+    # main(args.days)
+    return args.days
+
+
 def main(n):
-    create(n)
+    create(parse_args(n))
 
 
 def get_spreadsheet_data():
@@ -56,6 +69,7 @@ def create(days):
     for row in rows:
         if row[4].value >= date_delta:
             retrieved_data.append(row)
+    # TODO: Review this loop. consider using enumerate.        
     try:
         for rownum in range(len(retrieved_data) + 1):
 
@@ -70,11 +84,5 @@ def create(days):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        prog="retrieve_data", description="Retrieve data from a spreadsheet",
-        usage='%(prog)s [options]')
-    parser.add_argument(
-        "days", type=int, help="Retrieve customer data from the last n days",
-        choices=[7, 15, 30])
-    args = parser.parse_args()
-    main(args.days)
+    # Everything except the script name is passed to the main function.
+    main(sys.argv[1:])
