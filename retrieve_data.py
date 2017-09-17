@@ -41,6 +41,34 @@ def string_to_index(col):
     return openpyxl.utils.column_index_from_string(col)
 
 
+def get_cust_data_from_worksheet(rows, days, date_delta):
+    """Retrieves worksheet data in a useful format.
+
+    Attributes:
+        rows: list. A list of all the rows retrieved from the spreadsheet.
+        date_delta: datetime.datetime. The date range to search for.
+    Returns:
+        values: list. A list of the records in the last N days where N is the
+            date_delta
+    """
+# Search for records added in the last n days
+    values = []
+    for row in rows:
+        if row[4].value >= date_delta:
+            for cell in row:
+                values.append(cell.value)
+    if len(values) == 0:
+        print "No records added in the last {} days".format(days)
+        sys.exit()
+
+    # values is a long unordered list, it must be converted into a neat list of
+    # tuples that looks like this:
+    # [('Name'),('LastName'),('phone'),('email'),('date')]
+
+    new_values_list = zip(*[iter(values)]*5)
+    return new_values_list
+
+
 def create(days):
     """Creates new spreadsheet with customer info added in the last n days
 
@@ -61,24 +89,25 @@ def create(days):
     new_cust_ws = openpyxl.Workbook()
     sheet = new_cust_ws.active
     rows = get_spreadsheet_data()
-    # rows is a list of tuples
-    # each row looks like (<Cell Sheet.A2>, <Cell Sheet.B2>, <Cell Sheet.C2>)
-    retrieved_data = []
+    values = get_cust_data_from_worksheet(rows, days, date_delta)
+    # values is a list of cell values
+    # each row looks like:
+    # ([u'Michelle', u'Thomas', u'1-171-800-1954x38968'...,]
 
-    # Search for records added in the last n days
-    for row in rows:
-        if row[4].value >= date_delta:
-            retrieved_data.append(row)
-    # TODO: Review this loop. consider using enumerate.        
-    try:
-        for rownum in range(len(retrieved_data) + 1):
+    # Write Headers to Spreadsheet
+    sheet.cell(row=1, column=1).value = 'Name'
+    sheet.cell(row=1, column=2).value = 'Last Name'
+    sheet.cell(row=1, column=3).value = 'Phone Number'
+    sheet.cell(row=1, column=4).value = 'Email Address'
+    sheet.cell(row=1, column=5).value = 'Date'
 
-            for row_ in retrieved_data:
-                for item in row_:
-                    sheet.cell(row=rownum + 1, column=string_to_index(item.column)).value \
-                        = retrieved_data[rownum][string_to_index(item.column) - 1].value
-    except IndexError:
-        pass
+    # TODO: Test that no records are left out.
+    # TODO: Refactor the get_....data methods
+
+    for row_num, row in enumerate(values, start=2):
+        for col_num, cell in enumerate(row, start=1):
+            sheet.cell(row=row_num, column=col_num).value =\
+                values[row_num - 2][col_num - 1]
 
     new_cust_ws.save('cust-{0}-days.xlsx'.format(days))
 
