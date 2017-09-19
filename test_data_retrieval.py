@@ -18,12 +18,16 @@ class TestCommandlineOptions(unittest.TestCase):
         self.assertEqual(30, retrieve_data.parse_args(['30']))
 
 class TestGoogleSheets(unittest.TestCase):
+
+    @unittest.skip("Not implemented yet")
     def test_data_can_be_written_to_google_sheet(self):
         self.fail('This has not been implemented yet')
 
+    @unittest.skip("Not implemented yet")
     def test_data_can_be_read_from_google_sheet(self):
         self.fail('This has not been implemented yet')
 
+    @unittest.skip("Not implemented yet")
     def test_save_new_customer_excel_doc_to_google_sheet(self):
         self.fail('This has not been implemented yet')
 

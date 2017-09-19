@@ -101,9 +101,6 @@ def create(days):
     sheet.cell(row=1, column=4).value = 'Email Address'
     sheet.cell(row=1, column=5).value = 'Date'
 
-    # TODO: Test that no records are left out.
-    # TODO: Refactor the get_....data methods
-
     for row_num, row in enumerate(values, start=2):
         for col_num, cell in enumerate(row, start=1):
             sheet.cell(row=row_num, column=col_num).value =\
